@@ -18,7 +18,11 @@ async def create_user(db: AsyncSession, user: UserCreate, role: UserRole) -> Use
     if role not in UserRole:
         raise ValueError("Invalid role.")
     hashed_password = get_password_hash(user.password)
-    db_user = User(nickname=user.nickname, password=user.password, role=role)
+    db_user = User(
+        nickname=user.nickname,
+        password=hashed_password,
+        role=role,
+    )
     db.add(db_user)
     await db.flush()
     await db.refresh(db_user)
