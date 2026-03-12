@@ -15,8 +15,6 @@ async def get_user(db: AsyncSession, user_id: int) -> User | None:
 async def create_user(db: AsyncSession, user: UserCreate, role: UserRole) -> User:
     if role == UserRole.ADMIN:
         raise PermissionError("You are not allowed to create an admin user.")
-    if role not in UserRole:
-        raise ValueError("Invalid role.")
     hashed_password = get_password_hash(user.password)
     db_user = User(
         nickname=user.nickname,

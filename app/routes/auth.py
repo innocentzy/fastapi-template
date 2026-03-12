@@ -41,24 +41,20 @@ async def login(credentials: LoginRequest, db: AsyncSession = Depends(get_db)):
     access_token = create_access_token(data={"sub": str(user.id)})
     refresh_token = create_refresh_token(data={"sub": str(user.id)})
     return {
-        "access_token": Token(value=access_token, token_type=TokenType.ACCESS),
-        "refresh_token": Token(value=refresh_token, token_type=TokenType.REFRESH),
+        "access_token": Token(value=access_token),
+        "refresh_token": Token(value=refresh_token),
     }
 
 
 @router.post("/update-token", response_model=TokenPair)
 async def update_token(token: Token):
-    if token.token_type is not TokenType.REFRESH:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect refresh token.",
-        )
     payload = decode_token(token.value)
-    if not payload:
+    if not payload or payload.get("type") != TokenType.REFRESH:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token.",
         )
+
     user_id = payload.get("sub")
     if not user_id:
         raise HTTPException(
@@ -68,6 +64,6 @@ async def update_token(token: Token):
     access_token = create_access_token(data={"sub": str(user_id)})
     refresh_token = create_refresh_token(data={"sub": str(user_id)})
     return {
-        "access_token": Token(value=access_token, token_type=TokenType.ACCESS),
-        "refresh_token": Token(value=refresh_token, token_type=TokenType.REFRESH),
+        "access_token": Token(value=access_token),
+        "refresh_token": Token(value=refresh_token),
     }

@@ -21,8 +21,6 @@ class UserResponse(BaseModel):
 
 class Token(BaseModel):
     value: str
-    token_type: str
-    token_sign: str = "bearer"
 
 
 class TokenPair(BaseModel):

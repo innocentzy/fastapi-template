@@ -17,7 +17,7 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     nickname: Mapped[str] = mapped_column(String(100), index=True)
-    password: Mapped[str] = mapped_column(String(100))
+    password: Mapped[str] = mapped_column(String(255))
     role: Mapped[UserRole] = mapped_column(default=UserRole.USER)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
 
