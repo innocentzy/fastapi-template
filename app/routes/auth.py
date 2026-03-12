@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud import create_user, get_user_by_nickname
 from app.database import get_db
-from app.models.auth import TokenType
+from app.models.auth import TokenType, UserRole
 from app.schemas.auth import LoginRequest, Token, TokenPair, UserCreate, UserResponse
 from app.security import (
     create_access_token,
@@ -19,7 +19,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post(
     "/register/{role}", response_model=UserResponse, status_code=status.HTTP_201_CREATED
 )
-async def register(role, user: UserCreate, db: AsyncSession = Depends(get_db)):
+async def register(
+    role: UserRole, user: UserCreate, db: AsyncSession = Depends(get_db)
+):
     if await get_user_by_nickname(db, user.nickname):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
